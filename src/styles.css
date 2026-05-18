@@ -190,6 +190,13 @@ input:focus {
 .swipe-view {
   display: grid;
   gap: 12px;
+  overflow-x: hidden;
+}
+
+.swipe-card-stage {
+  isolation: isolate;
+  position: relative;
+  touch-action: pan-y;
 }
 
 .swipe-card {
@@ -197,6 +204,39 @@ input:focus {
   gap: 14px;
   overflow: hidden;
   padding: 12px;
+  position: relative;
+  touch-action: pan-y;
+  user-select: none;
+  will-change: transform;
+  z-index: 1;
+}
+
+.swipe-hint {
+  background: rgba(255, 255, 255, 0.9);
+  border: 3px solid currentColor;
+  border-radius: 8px;
+  font-size: 1.7rem;
+  font-weight: 900;
+  left: 22px;
+  letter-spacing: 0;
+  line-height: 1;
+  padding: 8px 10px;
+  pointer-events: none;
+  position: absolute;
+  top: 62px;
+  transform: rotate(-10deg);
+  z-index: 4;
+}
+
+.watch-hint {
+  color: #218f65;
+  left: auto;
+  right: 22px;
+  transform: rotate(10deg);
+}
+
+.skip-hint {
+  color: #d83e4d;
 }
 
 .progress-row {
@@ -213,6 +253,8 @@ input:focus {
   background: #1d282f;
   border-radius: 8px;
   overflow: hidden;
+  position: relative;
+  z-index: 1;
 }
 
 .poster-frame img,
@@ -221,6 +263,11 @@ input:focus {
   height: 100%;
   object-fit: cover;
   width: 100%;
+}
+
+.poster-frame img {
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 .poster-placeholder {

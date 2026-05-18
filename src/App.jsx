@@ -99,8 +99,8 @@ function App() {
     setActiveTab("swipe");
   }
 
-  async function handleVote(choice) {
-    if (!user || !currentItem || votePending) {
+  async function handleVote(choice, itemId = currentItem?.itemId) {
+    if (!user || !currentItem || !itemId || votePending) {
       return;
     }
 
@@ -112,14 +112,14 @@ function App() {
     try {
       await voteRequest({
         userId: user.userId,
-        itemId: currentItem.itemId,
+        itemId,
         choice,
         decisionMs,
       });
 
       setItems((previousItems) =>
         previousItems.map((item) =>
-          item.itemId === currentItem.itemId ? { ...item, userVote: choice } : item
+          item.itemId === itemId ? { ...item, userVote: choice } : item
         )
       );
     } catch (err) {
@@ -162,8 +162,7 @@ function App() {
                 item={currentItem}
                 progressCurrent={votedCount + 1}
                 progressTotal={items.length}
-                onSkip={() => handleVote("no")}
-                onWatch={() => handleVote("yes")}
+                onVote={handleVote}
                 pending={votePending}
               />
             )}
