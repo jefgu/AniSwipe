@@ -1,5 +1,6 @@
 import express from "express";
 
+import { allowedAnimeTypeFilter } from "../animeTypes.js";
 import Item from "../models/Item.js";
 import Vote from "../models/Vote.js";
 
@@ -50,7 +51,7 @@ router.get("/", async (req, res, next) => {
     }
 
     const [items, voteCounts] = await Promise.all([
-      Item.find({}).lean(),
+      Item.find(allowedAnimeTypeFilter()).lean(),
       Vote.aggregate([
         {
           $group: {

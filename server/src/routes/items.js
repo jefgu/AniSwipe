@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 
+import { allowedAnimeTypeFilter } from "../animeTypes.js";
 import Item from "../models/Item.js";
 import Vote from "../models/Vote.js";
 
@@ -25,7 +26,9 @@ function serializeItem(item, userVote = null) {
 router.get("/", async (req, res, next) => {
   try {
     const { userId } = req.query;
-    const items = await Item.find({}).sort({ rank: 1, title: 1 }).lean();
+    const items = await Item.find(allowedAnimeTypeFilter())
+      .sort({ rank: 1, title: 1 })
+      .lean();
     const voteByItemId = new Map();
 
     if (userId) {

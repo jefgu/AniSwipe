@@ -2,6 +2,10 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 
 import connectDB from "./src/db.js";
+import {
+  allowedAnimeTypeFilter,
+  isAllowedAnimeType,
+} from "./src/animeTypes.js";
 import Item from "./src/models/Item.js";
 
 dotenv.config();
@@ -71,6 +75,10 @@ async function seedAnime() {
         continue;
       }
 
+      if (!isAllowedAnimeType(item.type)) {
+        continue;
+      }
+
       await Item.findOneAndUpdate(
         { itemId: item.itemId },
         { $set: item },
@@ -93,9 +101,9 @@ async function seedAnime() {
     await sleep(800);
   }
 
-  const totalItems = await Item.countDocuments();
+  const totalItems = await Item.countDocuments(allowedAnimeTypeFilter());
   console.log(`Seed complete. Saved ${seenItemIds.size} anime this run.`);
-  console.log(`Database now contains ${totalItems} anime items.`);
+  console.log(`Database now contains ${totalItems} allowed anime items.`);
 }
 
 seedAnime()

@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 
+import { allowedAnimeTypeFilter } from "../animeTypes.js";
 import Item from "../models/Item.js";
 import User from "../models/User.js";
 import Vote from "../models/Vote.js";
@@ -29,7 +30,10 @@ router.get("/", async (req, res, next) => {
     }
 
     const [items, voteCounts] = await Promise.all([
-      Item.find({ _id: { $in: itemMongoIds } }).lean(),
+      Item.find({
+        _id: { $in: itemMongoIds },
+        ...allowedAnimeTypeFilter(),
+      }).lean(),
       Vote.aggregate([
         { $match: { itemId: { $in: itemMongoIds } } },
         {

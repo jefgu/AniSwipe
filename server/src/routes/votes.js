@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 
+import { isAllowedAnimeType } from "../animeTypes.js";
 import Item from "../models/Item.js";
 import SwipeEvent from "../models/SwipeEvent.js";
 import User from "../models/User.js";
@@ -77,6 +78,12 @@ router.post("/", async (req, res, next) => {
 
     if (!item) {
       return res.status(404).json({ error: "Item not found" });
+    }
+
+    if (!isAllowedAnimeType(item.type)) {
+      return res.status(400).json({
+        error: "This item type is not available for AniSwipe voting",
+      });
     }
 
     const vote = await Vote.findOneAndUpdate(
