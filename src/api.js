@@ -38,6 +38,13 @@ export function vote({ userId, itemId, choice, decisionMs }) {
   });
 }
 
+export function deleteVote({ userId, itemId }) {
+  return request("/vote", {
+    method: "DELETE",
+    body: JSON.stringify({ userId, itemId }),
+  });
+}
+
 export function getResults(sort) {
   return request(`/results?sort=${encodeURIComponent(sort)}`);
 }

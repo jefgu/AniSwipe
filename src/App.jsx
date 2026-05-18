@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 
 import {
+  deleteVote as deleteVoteRequest,
   getItems,
   getMatches,
   getResults,
@@ -36,6 +37,8 @@ function App() {
   const [itemsError, setItemsError] = useState("");
   const [voteError, setVoteError] = useState("");
   const [votePending, setVotePending] = useState(false);
+  const [undoPending, setUndoPending] = useState(false);
+  const [lastVote, setLastVote] = useState(null);
   const [cardStartedAt, setCardStartedAt] = useState(Date.now());
 
   const unvotedItems = useMemo(
@@ -61,6 +64,7 @@ function App() {
 
         if (!ignore) {
           setItems(data.items || []);
+          setLastVote(null);
         }
       } catch (err) {
         if (!ignore) {
@@ -96,11 +100,12 @@ function App() {
     localStorage.removeItem(STORAGE_KEY);
     setUser(null);
     setItems([]);
+    setLastVote(null);
     setActiveTab("swipe");
   }
 
   async function handleVote(choice, itemId = currentItem?.itemId) {
-    if (!user || !currentItem || !itemId || votePending) {
+    if (!user || !currentItem || !itemId || votePending || undoPending) {
       return false;
     }
 
@@ -108,6 +113,7 @@ function App() {
     setVoteError("");
 
     const decisionMs = Date.now() - cardStartedAt;
+    const votedItem = items.find((item) => item.itemId === itemId);
 
     try {
       await voteRequest({
@@ -122,6 +128,11 @@ function App() {
           item.itemId === itemId ? { ...item, userVote: choice } : item
         )
       );
+      setLastVote({
+        itemId,
+        choice,
+        title: votedItem?.title || "Previous anime",
+      });
 
       return true;
     } catch (err) {
@@ -129,6 +140,33 @@ function App() {
       return false;
     } finally {
       setVotePending(false);
+    }
+  }
+
+  async function handleUndoLastVote() {
+    if (!user || !lastVote || undoPending) {
+      return;
+    }
+
+    setUndoPending(true);
+    setVoteError("");
+
+    try {
+      await deleteVoteRequest({
+        userId: user.userId,
+        itemId: lastVote.itemId,
+      });
+
+      setItems((previousItems) =>
+        previousItems.map((item) =>
+          item.itemId === lastVote.itemId ? { ...item, userVote: null } : item
+        )
+      );
+      setLastVote(null);
+    } catch (err) {
+      setVoteError(err.message);
+    } finally {
+      setUndoPending(false);
     }
   }
 
@@ -167,12 +205,32 @@ function App() {
                 progressCurrent={votedCount + 1}
                 progressTotal={items.length}
                 onVote={handleVote}
-                pending={votePending}
+                pending={votePending || undoPending}
               />
             )}
 
             {!itemsLoading && !itemsError && !currentItem && (
               <EndOfDeck total={items.length} />
+            )}
+
+            {!itemsLoading && !itemsError && lastVote && (
+              <div className="undo-panel">
+                <div>
+                  <span>Last swipe</span>
+                  <strong>
+                    {lastVote.choice === "yes" ? "Watch" : "Skip"} ·{" "}
+                    {lastVote.title}
+                  </strong>
+                </div>
+                <button
+                  className="secondary-button"
+                  disabled={undoPending || votePending}
+                  onClick={handleUndoLastVote}
+                  type="button"
+                >
+                  {undoPending ? "Undoing..." : "Undo"}
+                </button>
+              </div>
             )}
 
             {voteError && <p className="inline-error">{voteError}</p>}
