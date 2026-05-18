@@ -1,27 +1,50 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const SORT_OPTIONS = [
-  { value: "mostLoved", label: "Loved" },
-  { value: "mostVoted", label: "Voted" },
-  { value: "mostDivisive", label: "Divisive" },
-  { value: "alphabetical", label: "A-Z" },
+  { value: "mostLoved", label: "Most loved" },
+  { value: "mostVoted", label: "Most voted" },
+  { value: "mostDivisive", label: "Most divisive" },
+  { value: "alphabetical", label: "Alphabetical" },
 ];
 
+const POLL_INTERVAL_MS = 5000;
+
+function formatPercent(value) {
+  const rate = Number(value || 0);
+  return Number.isInteger(rate) ? `${rate}%` : `${rate.toFixed(1)}%`;
+}
+
 export default function ResultsView({ fetchResults }) {
-  const [sort, setSort] = useState("mostLoved");
+  const [selectedSort, setSelectedSort] = useState("mostLoved");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const visibleResults = useMemo(() => {
+    if (selectedSort !== "mostDivisive") {
+      return results;
+    }
+
+    return [...results].sort(
+      (a, b) =>
+        Math.abs(a.yesRate - 50) - Math.abs(b.yesRate - 50) ||
+        b.totalVotes - a.totalVotes ||
+        a.title.localeCompare(b.title)
+    );
+  }, [results, selectedSort]);
+
   useEffect(() => {
     let ignore = false;
 
-    async function loadResults() {
-      setLoading(true);
+    async function loadResults(showLoading = false) {
+      if (showLoading) {
+        setLoading(true);
+      }
+
       setError("");
 
       try {
-        const data = await fetchResults(sort);
+        const data = await fetchResults(selectedSort);
 
         if (!ignore) {
           setResults(data.results || []);
@@ -37,46 +60,68 @@ export default function ResultsView({ fetchResults }) {
       }
     }
 
-    loadResults();
+    loadResults(true);
+    const intervalId = window.setInterval(() => loadResults(false), POLL_INTERVAL_MS);
 
     return () => {
       ignore = true;
+      window.clearInterval(intervalId);
     };
-  }, [fetchResults, sort]);
+  }, [fetchResults, selectedSort]);
 
   return (
     <section className="list-view">
-      <div className="segmented-control" aria-label="Sort results">
-        {SORT_OPTIONS.map((option) => (
-          <button
-            className={sort === option.value ? "active" : ""}
-            key={option.value}
-            onClick={() => setSort(option.value)}
-            type="button"
-          >
-            {option.label}
-          </button>
-        ))}
+      <div className="results-toolbar">
+        <label htmlFor="results-sort">Sort results</label>
+        <select
+          className="sort-select"
+          id="results-sort"
+          onChange={(event) => setSelectedSort(event.target.value)}
+          value={selectedSort}
+        >
+          {SORT_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       {loading && <div className="panel-state">Loading results...</div>}
       {error && <div className="panel-state error-state">{error}</div>}
 
-      {!loading && !error && (
+      {!loading && !error && visibleResults.length === 0 && (
+        <div className="panel-state">No results yet.</div>
+      )}
+
+      {!loading && !error && visibleResults.length > 0 && (
         <div className="result-list">
-          {results.map((item) => (
-            <article className="list-item" key={item.itemId}>
-              <img alt={item.title} src={item.imageUrl} />
-              <div>
+          {visibleResults.map((item) => (
+            <article className="list-item result-item" key={item.itemId}>
+              {item.imageUrl ? (
+                <img alt={item.title} src={item.imageUrl} />
+              ) : (
+                <div className="result-thumbnail-placeholder" aria-hidden="true" />
+              )}
+
+              <div className="result-copy">
                 <h2>{item.title}</h2>
-                <p>
-                  {item.yesCount} watch / {item.noCount} skip
-                </p>
-                <div className="meter" aria-label={`${item.yesRate}% watch rate`}>
+                <div className="result-stats">
+                  <span>{item.yesCount} watch</span>
+                  <span>{item.noCount} skip</span>
+                  <span>{item.totalVotes} total</span>
+                </div>
+                <div
+                  className="meter"
+                  aria-label={`${formatPercent(item.yesRate)} watch rate`}
+                >
                   <span style={{ width: `${Math.min(item.yesRate, 100)}%` }} />
                 </div>
               </div>
-              <strong>{item.yesRate}%</strong>
+
+              <strong className="result-percentage">
+                {formatPercent(item.yesRate)}
+              </strong>
             </article>
           ))}
         </div>

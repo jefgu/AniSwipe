@@ -101,7 +101,7 @@ function App() {
 
   async function handleVote(choice, itemId = currentItem?.itemId) {
     if (!user || !currentItem || !itemId || votePending) {
-      return;
+      return false;
     }
 
     setVotePending(true);
@@ -122,8 +122,11 @@ function App() {
           item.itemId === itemId ? { ...item, userVote: choice } : item
         )
       );
+
+      return true;
     } catch (err) {
       setVoteError(err.message);
+      return false;
     } finally {
       setVotePending(false);
     }
@@ -159,6 +162,7 @@ function App() {
 
             {!itemsLoading && !itemsError && currentItem && (
               <SwipeCard
+                key={currentItem.itemId}
                 item={currentItem}
                 progressCurrent={votedCount + 1}
                 progressTotal={items.length}
