@@ -22,6 +22,8 @@ const STORAGE_KEY = "aniswipeUser";
 const BACKGROUND_CREDIT_URL =
   "https://www.publicdomainpictures.net/en/view-image.php?image=511609&picture=anime-city";
 const BACKGROUND_CREDIT_TEXT = "Background: Anime City by Hay Lyo (CC0)";
+const DATA_CREDIT_URL = "https://jikan.moe/";
+const DATA_CREDIT_TEXT = "Data: Jikan API for MyAnimeList";
 const PAGE_FADE = {
   initial: { opacity: 0 },
   animate: { opacity: 1 },
@@ -185,6 +187,8 @@ function App() {
       <Login
         backgroundCreditText={BACKGROUND_CREDIT_TEXT}
         backgroundCreditUrl={BACKGROUND_CREDIT_URL}
+        dataCreditText={DATA_CREDIT_TEXT}
+        dataCreditUrl={DATA_CREDIT_URL}
         onLogin={handleLogin}
       />
     );
@@ -281,6 +285,14 @@ function App() {
         target="_blank"
       >
         {BACKGROUND_CREDIT_TEXT}
+      </a>
+      <a
+        className="background-credit data-credit app-credit"
+        href={DATA_CREDIT_URL}
+        rel="noreferrer"
+        target="_blank"
+      >
+        {DATA_CREDIT_TEXT}
       </a>
     </div>
   );

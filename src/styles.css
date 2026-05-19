@@ -118,6 +118,11 @@ button:disabled {
   z-index: 9;
 }
 
+.data-credit {
+  left: auto;
+  right: 12px;
+}
+
 .background-credit:focus,
 .background-credit:hover {
   color: #172026;

@@ -11,6 +11,10 @@ import AnimeImage from "./AnimeImage.jsx";
 
 const SWIPE_THRESHOLD = 120;
 const MIN_EXIT_DISTANCE = 620;
+const DEFAULT_EXIT_DURATION = 1.6;
+const MIN_EXIT_DURATION = 1;
+const MAX_EXIT_DURATION = 1.6;
+const FAST_SWIPE_VELOCITY = 1600;
 
 function truncateDescription(description) {
   if (!description) {
@@ -58,6 +62,17 @@ export default function SwipeCard({
     return Math.max(window.innerWidth + 220, MIN_EXIT_DISTANCE);
   }
 
+  function getExitDuration(releaseVelocityX) {
+    if (!Number.isFinite(releaseVelocityX)) {
+      return DEFAULT_EXIT_DURATION;
+    }
+
+    const speed = Math.min(Math.abs(releaseVelocityX), FAST_SWIPE_VELOCITY);
+    const progress = speed / FAST_SWIPE_VELOCITY;
+
+    return MAX_EXIT_DURATION - (MAX_EXIT_DURATION - MIN_EXIT_DURATION) * progress;
+  }
+
   async function animateX(to, transition) {
     const playback = animate(x, to, transition);
 
@@ -71,22 +86,23 @@ export default function SwipeCard({
     }
   }
 
-  async function animateVote(choice, direction) {
+  async function animateVote(choice, direction, releaseVelocityX) {
     if (isLocked) {
       return;
     }
 
     setIsExiting(true);
+    const exitDuration = getExitDuration(releaseVelocityX);
 
     await Promise.all([
       animateX(direction * getExitDistance(), {
-        duration: 0.32,
+        duration: exitDuration,
         ease: [0.22, 1, 0.36, 1],
       }),
       controls.start({
         opacity: 0,
         scale: 0.96,
-        transition: { duration: 0.32, ease: [0.22, 1, 0.36, 1] },
+        transition: { duration: exitDuration, ease: [0.22, 1, 0.36, 1] },
       }),
     ]);
 
@@ -110,13 +126,15 @@ export default function SwipeCard({
       return;
     }
 
+    const releaseVelocityX = info?.velocity?.x ?? 0;
+
     if (info.offset.x > SWIPE_THRESHOLD) {
-      animateVote("yes", 1);
+      animateVote("yes", 1, releaseVelocityX);
       return;
     }
 
     if (info.offset.x < -SWIPE_THRESHOLD) {
-      animateVote("no", -1);
+      animateVote("no", -1, releaseVelocityX);
       return;
     }
 
@@ -146,6 +164,7 @@ export default function SwipeCard({
         drag={isLocked ? false : "x"}
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.82}
+        dragMomentum={false}
         initial={{ opacity: 0, scale: 0.98 }}
         onDragEnd={handleDragEnd}
         style={{ x, rotate }}

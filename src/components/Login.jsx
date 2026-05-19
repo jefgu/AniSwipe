@@ -5,6 +5,8 @@ const USERNAME_PATTERN = /^[a-zA-Z0-9_-]{2,30}$/;
 export default function Login({
   backgroundCreditText,
   backgroundCreditUrl,
+  dataCreditText,
+  dataCreditUrl,
   onLogin,
 }) {
   const [username, setUsername] = useState("");
@@ -68,6 +70,17 @@ export default function Login({
           target="_blank"
         >
           {backgroundCreditText}
+        </a>
+      )}
+
+      {dataCreditText && dataCreditUrl && (
+        <a
+          className="background-credit data-credit login-credit"
+          href={dataCreditUrl}
+          rel="noreferrer"
+          target="_blank"
+        >
+          {dataCreditText}
         </a>
       )}
     </main>
