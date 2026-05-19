@@ -11,7 +11,6 @@ The theme is anime discovery. The seeded dataset comes from Jikan, an unofficial
 - Frontend: React, Vite, Motion for React
 - Backend: Node.js, Express
 - Database: MongoDB with Mongoose
-- Identity: lightweight username login
 - Data source: Jikan API / MyAnimeList metadata
 
 ## Run MongoDB Locally
