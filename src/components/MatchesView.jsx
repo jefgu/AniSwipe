@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import AnimeImage from "./AnimeImage.jsx";
+
 function formatPercent(value) {
   const rate = Number(value || 0);
   return Number.isInteger(rate) ? `${rate}%` : `${rate.toFixed(1)}%`;
@@ -66,11 +68,7 @@ export default function MatchesView({ userId, fetchMatches }) {
               }`}
               key={item.itemId}
             >
-              {item.imageUrl ? (
-                <img alt={item.title} src={item.imageUrl} />
-              ) : (
-                <div className="result-thumbnail-placeholder" aria-hidden="true" />
-              )}
+              <AnimeImage alt={item.title} src={item.imageUrl} />
 
               <div className="result-copy">
                 <h2>{item.title}</h2>

@@ -7,6 +7,8 @@ import {
   useTransform,
 } from "motion/react";
 
+import AnimeImage from "./AnimeImage.jsx";
+
 const SWIPE_THRESHOLD = 120;
 const MIN_EXIT_DISTANCE = 620;
 
@@ -157,16 +159,7 @@ export default function SwipeCard({
         </div>
 
         <div className="poster-frame">
-          {item.imageUrl ? (
-            <img
-              alt={item.title}
-              draggable="false"
-              onDragStart={(event) => event.preventDefault()}
-              src={item.imageUrl}
-            />
-          ) : (
-            <div className="poster-placeholder">AniSwipe</div>
-          )}
+          <AnimeImage alt={item.title} src={item.imageUrl} variant="poster" />
         </div>
 
         <div className="card-copy">
@@ -182,7 +175,7 @@ export default function SwipeCard({
               <span>{item.episodes} eps</span>
             )}
           </div>
-          <p>
+          <p className={isDescriptionExpanded ? "expanded" : ""}>
             {isDescriptionExpanded
               ? item.description || "No synopsis available."
               : truncateDescription(item.description)}

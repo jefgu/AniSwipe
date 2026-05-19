@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
+import AnimeImage from "./AnimeImage.jsx";
+
 const SORT_OPTIONS = [
   { value: "mostLoved", label: "Most loved" },
   { value: "mostVoted", label: "Most voted" },
@@ -108,11 +110,7 @@ export default function ResultsView({ fetchResults }) {
               }`}
               key={item.itemId}
             >
-              {item.imageUrl ? (
-                <img alt={item.title} src={item.imageUrl} />
-              ) : (
-                <div className="result-thumbnail-placeholder" aria-hidden="true" />
-              )}
+              <AnimeImage alt={item.title} src={item.imageUrl} />
 
               <div className="result-copy">
                 <h2>{item.title}</h2>
