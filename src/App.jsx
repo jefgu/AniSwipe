@@ -4,12 +4,14 @@ import { AnimatePresence, motion } from "motion/react";
 
 import {
   deleteVote as deleteVoteRequest,
+  getAnalytics,
   getItems,
   getMatches,
   getResults,
   login as loginRequest,
   vote as voteRequest,
 } from "./api.js";
+import AnalyticsView from "./components/AnalyticsView.jsx";
 import BottomNav from "./components/BottomNav.jsx";
 import EndOfDeck from "./components/EndOfDeck.jsx";
 import Login from "./components/Login.jsx";
@@ -24,6 +26,12 @@ const BACKGROUND_CREDIT_URL =
 const BACKGROUND_CREDIT_TEXT = "Background: Anime City by Hay Lyo (CC0)";
 const DATA_CREDIT_URL = "https://jikan.moe/";
 const DATA_CREDIT_TEXT = "Data: Jikan API for MyAnimeList";
+const TAB_TITLES = {
+  swipe: "Swipe",
+  results: "Results",
+  matches: "Matches",
+  analytics: "Analytics",
+};
 const PAGE_FADE = {
   initial: { opacity: 0 },
   animate: { opacity: 1 },
@@ -199,7 +207,7 @@ function App() {
       <header className="app-header">
         <div>
           <p className="eyebrow">AniSwipe</p>
-          <h1>{activeTab === "swipe" ? "Swipe" : activeTab}</h1>
+          <h1>{TAB_TITLES[activeTab] || "Swipe"}</h1>
         </div>
         <div className="user-box">
           <span>@{user.username}</span>
@@ -272,6 +280,12 @@ function App() {
           {activeTab === "matches" && (
             <motion.div key="matches" {...PAGE_FADE}>
               <MatchesView userId={user.userId} fetchMatches={getMatches} />
+            </motion.div>
+          )}
+
+          {activeTab === "analytics" && (
+            <motion.div key="analytics" {...PAGE_FADE}>
+              <AnalyticsView fetchAnalytics={getAnalytics} />
             </motion.div>
           )}
         </AnimatePresence>

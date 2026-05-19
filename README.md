@@ -103,6 +103,7 @@ POST   /api/vote
 DELETE /api/vote
 GET    /api/results?sort=mostLoved|mostVoted|mostDivisive|alphabetical
 GET    /api/matches?userId=...
+GET    /api/analytics
 ```
 
 Vote body:
@@ -170,6 +171,7 @@ Votes are tied to both `userId` and `itemId`. The `Vote` model defines a MongoDB
 - Demo population vote seed for richer aggregate results
 - Mobile UI polish for a 390x844 viewport
 - Broken image fallback handling
+- Basic analytics dashboard for total swipes, sessions, and average decision time
 
 ## Known Issues
 

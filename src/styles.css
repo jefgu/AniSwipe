@@ -582,6 +582,93 @@ select {
   gap: 10px;
 }
 
+.analytics-view {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.analytics-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.metric-card,
+.analytics-panel {
+  background: var(--surface);
+  border: 1px solid rgba(23, 32, 38, 0.08);
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(28, 43, 50, 0.1);
+}
+
+.metric-card {
+  display: grid;
+  gap: 6px;
+  min-height: 96px;
+  padding: 14px 12px;
+}
+
+.metric-card span,
+.analytics-row span,
+.analytics-note {
+  color: #5d6972;
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.metric-card strong {
+  color: #172026;
+  font-size: 1.58rem;
+  line-height: 1;
+}
+
+.analytics-panel {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.analytics-row {
+  align-items: end;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.analytics-row div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.analytics-row strong {
+  color: #172026;
+  font-size: 1.1rem;
+}
+
+.analytics-row > span {
+  color: #e94f5d;
+  font-size: 0.95rem;
+}
+
+.analytics-meter {
+  margin-bottom: 8px;
+}
+
+.skip-meter span {
+  background: #e94f5d;
+}
+
+.analytics-note {
+  background: var(--surface-soft);
+  border: 1px solid rgba(23, 32, 38, 0.08);
+  border-radius: 8px;
+  margin: 0;
+  padding: 12px;
+}
+
 .list-item {
   align-items: center;
   background: var(--surface);
@@ -750,7 +837,7 @@ select {
   box-shadow: 0 16px 40px rgba(28, 43, 50, 0.18);
   display: grid;
   gap: 6px;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   left: 50%;
   max-width: 488px;
   padding: 6px;

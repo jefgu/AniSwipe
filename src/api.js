@@ -52,3 +52,7 @@ export function getResults(sort) {
 export function getMatches(userId) {
   return request(`/matches?userId=${encodeURIComponent(userId)}`);
 }
+
+export function getAnalytics() {
+  return request("/analytics");
+}

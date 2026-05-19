@@ -2,6 +2,7 @@ const TABS = [
   { id: "swipe", label: "Swipe" },
   { id: "results", label: "Results" },
   { id: "matches", label: "Matches" },
+  { id: "analytics", label: "Stats" },
 ];
 
 export default function BottomNav({ activeTab, onChange }) {

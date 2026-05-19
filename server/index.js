@@ -4,6 +4,7 @@ import express from "express";
 import mongoose from "mongoose";
 
 import connectDB from "./src/db.js";
+import analyticsRoutes from "./src/routes/analytics.js";
 import authRoutes from "./src/routes/auth.js";
 import itemRoutes from "./src/routes/items.js";
 import matchRoutes from "./src/routes/matches.js";
@@ -32,6 +33,7 @@ app.use("/api/items", itemRoutes);
 app.use("/api/vote", voteRoutes);
 app.use("/api/results", resultRoutes);
 app.use("/api/matches", matchRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
