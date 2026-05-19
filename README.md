@@ -146,32 +146,29 @@ Votes are tied to both `userId` and `itemId`. The `Vote` model defines a MongoDB
 
 `POST /api/vote` uses an upsert, so repeated votes by the same user on the same anime update the existing vote instead of creating duplicates. This prevents double-counting in aggregate results.
 
-## Completed Core Requirements
+## 3. Functional Requirements
 
-- React + Vite mobile-first frontend
-- Node.js + Express backend
-- MongoDB persistence with Mongoose
-- Lightweight username login
-- Anime seed script using Jikan
-- 100+ seeded anime items
-- Vote yes/no flow
-- Persistent aggregate results
-- Matches endpoint and view
-- Unique vote deduplication per user and anime
-- Backend health endpoint
+### 3.1 Core (must have)
 
-## Completed Stretch Requirements
+- Pick a voting theme. Document it clearly in your README.
+- Provide at least 100 distinct items to vote on. Items must include at least an image (or generated visual) and a short label or description.
+- Implement a swipe-card interface as the primary voting UI:
+  - Swipe right (or tap a “Yes” button) records a yes vote.
+  - Swipe left (or tap a “No” button) records a no vote.
+  - Visual feedback during the gesture (card tilt, color hint, threshold).
+  - Smooth transition to the next card after each vote.
+- Implement a results view reachable by a downward swipe or a clearly visible tab/button. The results view must show aggregate yes/no counts across all users for every item, sortable or filterable in at least one meaningful way (e.g. most-loved, most-divisive, most-skipped).
+- Persist all votes to a backend you control. localStorage may be used as a cache or for the user’s own session, but the source of truth must live on the server. You can pick an implementation for a server.
+- Handle the end-of-deck state gracefully (e.g., “You’ve voted on everything — see how others voted”).
 
-- Drag/swipe gestures with click buttons as fallback
-- Swipe hints and card exit/fade transitions
-- Undo last swipe with `DELETE /api/vote`
-- Expandable descriptions/details
-- Results sorting and polling
-- Demo `end` user seed for end-of-deck testing
-- Demo population vote seed for richer aggregate results
-- Mobile UI polish for a 390x844 viewport
-- Broken image fallback handling
-- Basic analytics dashboard for total swipes, sessions, and average decision time
+### 3.2 Stretch (nice to have, in priority order)
+
+- User identity: anonymous session ID at minimum, or a lightweight sign-in (email magic link, OAuth, or simple username) so a user’s own votes are remembered across reloads.
+- Undo last swipe.
+- “Matches” view: items where the current user voted yes and the global yes-rate is above some threshold.
+- Real-time updating of aggregate counts (polling is fine; websockets are a plus).
+- Admin or seed script to add new items without code changes.
+- Basic analytics: total swipes, sessions, average decision time.
 
 ## Known Issues
 
