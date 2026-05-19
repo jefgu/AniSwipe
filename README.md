@@ -11,7 +11,6 @@ The theme is anime discovery. The seeded dataset comes from Jikan, an unofficial
 - Frontend: React, Vite, Motion for React
 - Backend: Node.js, Express
 - Database: MongoDB with Mongoose
-- Identity: lightweight username login
 - Data source: Jikan API / MyAnimeList metadata
 
 ## Run MongoDB Locally
@@ -67,6 +66,15 @@ npm run seed:end
 ```
 
 The `end` user is useful for testing the end-of-deck screen.
+
+Seed a group of demo users with varied voting histories:
+
+```bash
+cd server
+npm run seed:votes
+```
+
+By default this creates 12 users named `demo_user_01` through `demo_user_12`. Set `DEMO_USER_COUNT` to choose a different number.
 
 ## Frontend Setup
 
@@ -159,6 +167,7 @@ Votes are tied to both `userId` and `itemId`. The `Vote` model defines a MongoDB
 - Expandable descriptions/details
 - Results sorting and polling
 - Demo `end` user seed for end-of-deck testing
+- Demo population vote seed for richer aggregate results
 - Mobile UI polish for a 390x844 viewport
 - Broken image fallback handling
 
