@@ -182,3 +182,5 @@ Votes are tied to both `userId` and `itemId`. The `Vote` model defines a MongoDB
 ## Data Credit
 
 Anime metadata and images are fetched from the [Jikan API](https://jikan.moe/), an unofficial API for [MyAnimeList](https://myanimelist.net/). AnimeSwipe stores seeded data locally in MongoDB and does not call Jikan during normal demo use.
+
+The app background uses [“Anime City” by Hay Lyo](https://www.publicdomainpictures.net/en/view-image.php?image=511609&picture=anime-city), released as CC0/Public Domain on PublicDomainPictures.

@@ -19,6 +19,9 @@ import SwipeCard from "./components/SwipeCard.jsx";
 import "./styles.css";
 
 const STORAGE_KEY = "aniswipeUser";
+const BACKGROUND_CREDIT_URL =
+  "https://www.publicdomainpictures.net/en/view-image.php?image=511609&picture=anime-city";
+const BACKGROUND_CREDIT_TEXT = "Background: Anime City by Hay Lyo (CC0)";
 const PAGE_FADE = {
   initial: { opacity: 0 },
   animate: { opacity: 1 },
@@ -178,7 +181,13 @@ function App() {
   }
 
   if (!user) {
-    return <Login onLogin={handleLogin} />;
+    return (
+      <Login
+        backgroundCreditText={BACKGROUND_CREDIT_TEXT}
+        backgroundCreditUrl={BACKGROUND_CREDIT_URL}
+        onLogin={handleLogin}
+      />
+    );
   }
 
   return (
@@ -265,6 +274,14 @@ function App() {
       </main>
 
       <BottomNav activeTab={activeTab} onChange={setActiveTab} />
+      <a
+        className="background-credit app-credit"
+        href={BACKGROUND_CREDIT_URL}
+        rel="noreferrer"
+        target="_blank"
+      >
+        {BACKGROUND_CREDIT_TEXT}
+      </a>
     </div>
   );
 }

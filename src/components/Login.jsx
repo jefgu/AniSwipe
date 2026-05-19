@@ -2,7 +2,11 @@ import { useState } from "react";
 
 const USERNAME_PATTERN = /^[a-zA-Z0-9_-]{2,30}$/;
 
-export default function Login({ onLogin }) {
+export default function Login({
+  backgroundCreditText,
+  backgroundCreditUrl,
+  onLogin,
+}) {
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
@@ -55,6 +59,17 @@ export default function Login({ onLogin }) {
           {pending ? "Logging in..." : "Continue"}
         </button>
       </form>
+
+      {backgroundCreditText && backgroundCreditUrl && (
+        <a
+          className="background-credit login-credit"
+          href={backgroundCreditUrl}
+          rel="noreferrer"
+          target="_blank"
+        >
+          {backgroundCreditText}
+        </a>
+      )}
     </main>
   );
 }
