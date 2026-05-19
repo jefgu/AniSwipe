@@ -1,6 +1,6 @@
-# AnimeSwipe
+# AniSwipe
 
-AnimeSwipe is a mobile-first anime voting app. Users log in with a lightweight username, review anime cards, and vote `Watch` or `Skip`. The app stores votes persistently, shows aggregate results, and surfaces matches based on anime the current user liked.
+AniSwipe is a mobile-first anime voting app. Users log in with a lightweight username, review anime cards, and vote `Watch` or `Skip`. The app stores votes persistently, shows aggregate results, and surfaces matches based on anime the current user liked.
 
 ## Theme
 
@@ -127,7 +127,7 @@ Undo vote body:
 
 ## Architecture
 
-AnimeSwipe is split into a Vite React frontend and an Express backend. The frontend handles username login, card voting, undo, results, matches, and mobile interactions. It talks only to the backend API at `http://localhost:4000/api`.
+AniSwipe is split into a Vite React frontend and an Express backend. The frontend handles username login, card voting, undo, results, matches, and mobile interactions. It talks only to the backend API at `http://localhost:4000/api`.
 
 The backend owns persistence and validation. It connects to MongoDB through Mongoose models for users, anime items, votes, and swipe events. A seed script fetches anime from Jikan and stores normalized records in MongoDB, after which the app uses MongoDB as the source of truth.
 
@@ -181,6 +181,6 @@ Votes are tied to both `userId` and `itemId`. The `Vote` model defines a MongoDB
 
 ## Data Credit
 
-Anime metadata and images are fetched from the [Jikan API](https://jikan.moe/), an unofficial API for [MyAnimeList](https://myanimelist.net/). AnimeSwipe stores seeded data locally in MongoDB and does not call Jikan during normal demo use.
+Anime metadata and images are fetched from the [Jikan API](https://jikan.moe/), an unofficial API for [MyAnimeList](https://myanimelist.net/). AniSwipe stores seeded data locally in MongoDB and does not call Jikan during normal demo use.
 
 The app background uses [“Anime City” by Hay Lyo](https://www.publicdomainpictures.net/en/view-image.php?image=511609&picture=anime-city), released as CC0/Public Domain on PublicDomainPictures.
