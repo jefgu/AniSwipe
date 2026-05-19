@@ -14,11 +14,16 @@ function formatPercent(value) {
   return Number.isInteger(rate) ? `${rate}%` : `${rate.toFixed(1)}%`;
 }
 
+function formatValue(value, fallback = "Unknown") {
+  return value === null || value === undefined || value === "" ? fallback : value;
+}
+
 export default function ResultsView({ fetchResults }) {
   const [selectedSort, setSelectedSort] = useState("mostLoved");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [expandedItemId, setExpandedItemId] = useState(null);
 
   const visibleResults = useMemo(() => {
     if (selectedSort !== "mostDivisive") {
@@ -97,7 +102,12 @@ export default function ResultsView({ fetchResults }) {
       {!loading && !error && visibleResults.length > 0 && (
         <div className="result-list">
           {visibleResults.map((item) => (
-            <article className="list-item result-item" key={item.itemId}>
+            <article
+              className={`list-item result-item ${
+                expandedItemId === item.itemId ? "expanded" : ""
+              }`}
+              key={item.itemId}
+            >
               {item.imageUrl ? (
                 <img alt={item.title} src={item.imageUrl} />
               ) : (
@@ -111,6 +121,18 @@ export default function ResultsView({ fetchResults }) {
                   <span>{item.noCount} skip</span>
                   <span>{item.totalVotes} total</span>
                 </div>
+                <button
+                  aria-expanded={expandedItemId === item.itemId}
+                  className="result-toggle"
+                  onClick={() =>
+                    setExpandedItemId((currentId) =>
+                      currentId === item.itemId ? null : item.itemId
+                    )
+                  }
+                  type="button"
+                >
+                  {expandedItemId === item.itemId ? "Hide details" : "Details"}
+                </button>
                 <div
                   className="meter"
                   aria-label={`${formatPercent(item.yesRate)} watch rate`}
@@ -122,6 +144,36 @@ export default function ResultsView({ fetchResults }) {
               <strong className="result-percentage">
                 {formatPercent(item.yesRate)}
               </strong>
+
+              {expandedItemId === item.itemId && (
+                <div className="item-details">
+                  <p>{item.description || "No synopsis available."}</p>
+                  <div className="detail-grid">
+                    <span>Type</span>
+                    <strong>{formatValue(item.type)}</strong>
+                    <span>Episodes</span>
+                    <strong>{formatValue(item.episodes)}</strong>
+                    <span>Score</span>
+                    <strong>{formatValue(item.score)}</strong>
+                    <span>Rank</span>
+                    <strong>
+                      {item.rank === null || item.rank === undefined
+                        ? "Unknown"
+                        : `#${item.rank}`}
+                    </strong>
+                  </div>
+                  {item.sourceUrl && (
+                    <a
+                      className="source-link"
+                      href={item.sourceUrl}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      View source
+                    </a>
+                  )}
+                </div>
+              )}
             </article>
           ))}
         </div>

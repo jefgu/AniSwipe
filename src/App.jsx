@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { AnimatePresence, motion } from "motion/react";
 
 import {
   deleteVote as deleteVoteRequest,
@@ -18,6 +19,12 @@ import SwipeCard from "./components/SwipeCard.jsx";
 import "./styles.css";
 
 const STORAGE_KEY = "aniswipeUser";
+const PAGE_FADE = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.16, ease: "easeOut" },
+};
 
 function loadStoredUser() {
   try {
@@ -190,58 +197,71 @@ function App() {
       </header>
 
       <main className="app-main">
-        {activeTab === "swipe" && (
-          <section className="swipe-view" aria-live="polite">
-            {itemsLoading && <div className="panel-state">Loading anime...</div>}
+        <AnimatePresence mode="wait" initial={false}>
+          {activeTab === "swipe" && (
+            <motion.section
+              className="swipe-view"
+              key="swipe"
+              aria-live="polite"
+              {...PAGE_FADE}
+            >
+              {itemsLoading && <div className="panel-state">Loading anime...</div>}
 
-            {!itemsLoading && itemsError && (
-              <div className="panel-state error-state">{itemsError}</div>
-            )}
+              {!itemsLoading && itemsError && (
+                <div className="panel-state error-state">{itemsError}</div>
+              )}
 
-            {!itemsLoading && !itemsError && currentItem && (
-              <SwipeCard
-                key={currentItem.itemId}
-                item={currentItem}
-                progressCurrent={votedCount + 1}
-                progressTotal={items.length}
-                onVote={handleVote}
-                pending={votePending || undoPending}
-              />
-            )}
+              {!itemsLoading && !itemsError && currentItem && (
+                <SwipeCard
+                  key={currentItem.itemId}
+                  item={currentItem}
+                  progressCurrent={votedCount + 1}
+                  progressTotal={items.length}
+                  onVote={handleVote}
+                  pending={votePending || undoPending}
+                />
+              )}
 
-            {!itemsLoading && !itemsError && !currentItem && (
-              <EndOfDeck total={items.length} />
-            )}
+              {!itemsLoading && !itemsError && !currentItem && (
+                <EndOfDeck total={items.length} />
+              )}
 
-            {!itemsLoading && !itemsError && lastVote && (
-              <div className="undo-panel">
-                <div>
-                  <span>Last swipe</span>
-                  <strong>
-                    {lastVote.choice === "yes" ? "Watch" : "Skip"} ·{" "}
-                    {lastVote.title}
-                  </strong>
+              {!itemsLoading && !itemsError && lastVote && (
+                <div className="undo-panel">
+                  <div>
+                    <span>Last swipe</span>
+                    <strong>
+                      {lastVote.choice === "yes" ? "Watch" : "Skip"} ·{" "}
+                      {lastVote.title}
+                    </strong>
+                  </div>
+                  <button
+                    className="secondary-button"
+                    disabled={undoPending || votePending}
+                    onClick={handleUndoLastVote}
+                    type="button"
+                  >
+                    {undoPending ? "Undoing..." : "Undo"}
+                  </button>
                 </div>
-                <button
-                  className="secondary-button"
-                  disabled={undoPending || votePending}
-                  onClick={handleUndoLastVote}
-                  type="button"
-                >
-                  {undoPending ? "Undoing..." : "Undo"}
-                </button>
-              </div>
-            )}
+              )}
 
-            {voteError && <p className="inline-error">{voteError}</p>}
-          </section>
-        )}
+              {voteError && <p className="inline-error">{voteError}</p>}
+            </motion.section>
+          )}
 
-        {activeTab === "results" && <ResultsView fetchResults={getResults} />}
+          {activeTab === "results" && (
+            <motion.div key="results" {...PAGE_FADE}>
+              <ResultsView fetchResults={getResults} />
+            </motion.div>
+          )}
 
-        {activeTab === "matches" && (
-          <MatchesView userId={user.userId} fetchMatches={getMatches} />
-        )}
+          {activeTab === "matches" && (
+            <motion.div key="matches" {...PAGE_FADE}>
+              <MatchesView userId={user.userId} fetchMatches={getMatches} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
 
       <BottomNav activeTab={activeTab} onChange={setActiveTab} />

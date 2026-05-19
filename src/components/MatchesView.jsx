@@ -5,20 +5,15 @@ function formatPercent(value) {
   return Number.isInteger(rate) ? `${rate}%` : `${rate.toFixed(1)}%`;
 }
 
-function shortDescription(description) {
-  if (!description) {
-    return "No synopsis available.";
-  }
-
-  return description.length > 130
-    ? `${description.slice(0, 127).trim()}...`
-    : description;
+function formatValue(value, fallback = "Unknown") {
+  return value === null || value === undefined || value === "" ? fallback : value;
 }
 
 export default function MatchesView({ userId, fetchMatches }) {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [expandedItemId, setExpandedItemId] = useState(null);
 
   useEffect(() => {
     let ignore = false;
@@ -65,7 +60,12 @@ export default function MatchesView({ userId, fetchMatches }) {
       {!loading && !error && matches.length > 0 && (
         <div className="result-list">
           {matches.map((item) => (
-            <article className="list-item result-item match-item" key={item.itemId}>
+            <article
+              className={`list-item result-item match-item ${
+                expandedItemId === item.itemId ? "expanded" : ""
+              }`}
+              key={item.itemId}
+            >
               {item.imageUrl ? (
                 <img alt={item.title} src={item.imageUrl} />
               ) : (
@@ -77,15 +77,55 @@ export default function MatchesView({ userId, fetchMatches }) {
                 <div className="result-stats">
                   <span>{item.yesCount} watch</span>
                   <span>{item.noCount} skip</span>
+                  <span>{item.totalVotes} total</span>
                 </div>
-                <p className="match-description">
-                  {shortDescription(item.description)}
-                </p>
+                <button
+                  aria-expanded={expandedItemId === item.itemId}
+                  className="result-toggle"
+                  onClick={() =>
+                    setExpandedItemId((currentId) =>
+                      currentId === item.itemId ? null : item.itemId
+                    )
+                  }
+                  type="button"
+                >
+                  {expandedItemId === item.itemId ? "Hide details" : "Details"}
+                </button>
               </div>
 
               <strong className="result-percentage">
                 {formatPercent(item.yesRate)}
               </strong>
+
+              {expandedItemId === item.itemId && (
+                <div className="item-details">
+                  <p>{item.description || "No synopsis available."}</p>
+                  <div className="detail-grid">
+                    <span>Type</span>
+                    <strong>{formatValue(item.type)}</strong>
+                    <span>Episodes</span>
+                    <strong>{formatValue(item.episodes)}</strong>
+                    <span>Score</span>
+                    <strong>{formatValue(item.score)}</strong>
+                    <span>Rank</span>
+                    <strong>
+                      {item.rank === null || item.rank === undefined
+                        ? "Unknown"
+                        : `#${item.rank}`}
+                    </strong>
+                  </div>
+                  {item.sourceUrl && (
+                    <a
+                      className="source-link"
+                      href={item.sourceUrl}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      View source
+                    </a>
+                  )}
+                </div>
+              )}
             </article>
           ))}
         </div>

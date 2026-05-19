@@ -20,6 +20,10 @@ function truncateDescription(description) {
     : description;
 }
 
+function canExpandDescription(description) {
+  return Boolean(description && description.length > 210);
+}
+
 export default function SwipeCard({
   item,
   progressCurrent,
@@ -30,6 +34,7 @@ export default function SwipeCard({
   const x = useMotionValue(0);
   const controls = useAnimationControls();
   const [isExiting, setIsExiting] = useState(false);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const rotate = useTransform(x, [-180, 0, 180], [-8, 0, 8]);
   const watchOpacity = useTransform(x, [24, SWIPE_THRESHOLD], [0, 1]);
   const skipOpacity = useTransform(x, [-SWIPE_THRESHOLD, -24], [1, 0]);
@@ -37,6 +42,7 @@ export default function SwipeCard({
 
   useEffect(() => {
     setIsExiting(false);
+    setIsDescriptionExpanded(false);
     x.set(0);
     controls.set({ opacity: 0, scale: 0.98 });
     controls.start({
@@ -176,7 +182,23 @@ export default function SwipeCard({
               <span>{item.episodes} eps</span>
             )}
           </div>
-          <p>{truncateDescription(item.description)}</p>
+          <p>
+            {isDescriptionExpanded
+              ? item.description || "No synopsis available."
+              : truncateDescription(item.description)}
+          </p>
+          {canExpandDescription(item.description) && (
+            <button
+              aria-expanded={isDescriptionExpanded}
+              className="description-toggle"
+              onClick={() =>
+                setIsDescriptionExpanded((isExpanded) => !isExpanded)
+              }
+              type="button"
+            >
+              {isDescriptionExpanded ? "Show less" : "Show more"}
+            </button>
+          )}
         </div>
 
         <div className="vote-actions">

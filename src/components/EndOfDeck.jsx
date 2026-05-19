@@ -3,7 +3,7 @@ export default function EndOfDeck({ total }) {
     <section className="end-panel">
       <p className="eyebrow">Deck complete</p>
       <h2>{total} anime rated</h2>
-      <p>Results and matches are ready.</p>
+      <p>You’ve voted on everything — see how others voted</p>
     </section>
   );
 }
